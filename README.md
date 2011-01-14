@@ -50,11 +50,11 @@ then
 
     tplt = MyTemplate(who="World")
 
-is equlivent to this:
+is equivalent to this:
 
     tplt = MyTemplate({'who':"World"})
 
-is equlivent to this:
+is equivalent to this:
 
     tplt = Inskribe.Template(t="Hello, {who}!\n", item={'who':'World'})
     # this doesn't use the above defined class at all

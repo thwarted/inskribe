@@ -1,0 +1,4 @@
+- write a test suite more robust and organized than the bunch of crappy
+  one-off scripts I've been using
+- pre and post should be able to contain template variables, especially
+  for ListTemplate

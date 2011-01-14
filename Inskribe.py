@@ -70,12 +70,13 @@ class Template(object):
         # dict (and if it's a list, should be using ListTemplate instead)
         # otherwise, keyword arguments become the expected dict
         #  takes:
-        #    - a single dict => self.kwargs = that dict
-        #    - a single list => self.args = that list
-        #    - a empty args, non-empty kwargs =>self.kwargs = kwargs
-        #    - anything else => self.args, self.kwargs = args, kwargs
-        #    - t = template str, item=dict => self.kwargs=item, self.args=[]
-        #    - t = template str, items=list => self.kwargs={}, self.args=items
+        #    - a single dict => self._kwargs = that dict
+        #    - a single list => self._args = that list
+        #    - a single anything => self._args = [a] (so it's accessible with {0} index expansion)
+        #    - a empty args, non-empty kwargs =>self._kwargs = kwargs
+        #    - anything else => self._args, self._kwargs = args, kwargs
+        #    - t = template str, item=dict => self._kwargs=item, self._args=[]
+        #    - t = template str, items=list => self._kwargs={}, self._args=items
         if not kwargs:
             if len(args) == 1:
                 if type(args[0]) == dict:
@@ -86,7 +87,10 @@ class Template(object):
                     self._args = args[0]
                     self._kwargs = {}
                 else:
-                    raise TypeError("single argument to %s constructor must be either list or dict" % (self.__class__,))
+                    # convert anything else into a single element list
+                    # which will be accessible via {0}
+                    self._args = [args[0]]
+                    self._kwargs = {}
             else:
                 raise TypeError("%s constructor takes either a single list or single dict without keyword arguments" % (self.__class__,))
         else:
@@ -110,9 +114,16 @@ class Template(object):
         if not self.t and self.__doc__:
             self.t = self.__doc__
 
-        self._formatter = self.Formatter(self._find_context())
+        self.setup()
+        ctx = self._find_context()
+        self._kwargs = dict(ctx, **self._kwargs)
 
-    def _find_context(self, frameindex=1):
+        self._formatter = self.Formatter(ctx)
+
+    def setup(self):
+        pass
+
+    def _find_context(self):
         """Builds up a context for searching for filters by adding the
         attributes of the module the object is defined in and the
         object itself.
@@ -126,7 +137,10 @@ class Template(object):
         for ctx in trycontexts:
             for k in filter(isprivate, dir(ctx)):
                 context[k] = getattr(ctx, k)
+        # FIXME: these are less than ideal names, it's possible the template
+        # values use these keys
         context['self'] = self
+        context['module'] = sys.modules[self.__module__]
         return context
 
 
@@ -138,8 +152,8 @@ class Template(object):
 class ListTemplate(Template):
     _sequence_labeler = None # need some interface to set this
     def __init__(self, *args, **kwargs):
-        super(ListTemplate, self).__init__(*args, **kwargs)
         self._sequence_labeler = Labelers.simple_numbers()
+        super(ListTemplate, self).__init__(*args, **kwargs)
 
     def __str__(self):
         o = ''

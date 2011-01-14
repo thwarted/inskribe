@@ -59,7 +59,7 @@ is equivalent to this:
     tplt = Inskribe.Template(t="Hello, {who}!\n", item={'who':'World'})
     # this doesn't use the above defined class at all
 
-So far, this works *exactly* like string.Formatter, which you may already be familiar with.
+So far, this works *exactly* like `string.Formatter`, which you may already be familiar with.
 
 But you can also "filter" values passed to the template through other templates, using the pipe character, just like in UNIX.
 

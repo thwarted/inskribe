@@ -3,6 +3,7 @@
 Simple python templating library based on string.Formatter.
 
 Inskribe's goals:
+
 * focus on making formatting data unserialized from JSON easy
 * recognize that, at its core, templating is string manipulation, transforming strings and inserting strings inside other strings
 * be familiar by working like other common python templating idioms

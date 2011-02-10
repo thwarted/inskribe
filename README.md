@@ -234,6 +234,6 @@ I really wanted to implement this by overloading the conversion field that `stri
 
 Unfortunately, the base `string.Formatter.parse` function is implemented in C and is hardcoded to accept only one character for the conversion field.  A wide range of characters can be used, letters, numbers and much puncutation, and they get passed to the `convert_field` method, but single characters are not very very self documenting and kind of limited.  I consider this one character limitation of the conversion string to be a serious oversight in the implementation of `string.Formatter.parse`.
 
-But `string.Formatter` can be subclassed, and the parse function can be overridden.  But it's written in C for a reason: to be fast.  So I let the C code do its job and then examine the value strings looking for pipes and overriding the
+But `string.Formatter` can be subclassed, and the parse function can be overridden.  But it's written in C for a reason: to be fast.  So I let the C code do its job and then examine the results looking for pipes and overriding the `convert_field` method.
 
-Ultimately, I like this better because the use of the pipe character is already familiar in relation to filtering.  But it would have been nice to be able to leverage the documented template syntax and just provide a way to access conversion methods directly by name.
+Ultimately, I like this better because the use of the pipe character is already familiar in relation to filtering, and you can use more than one filter in series.  But it would have been nice to be able to leverage the documented template syntax and just provide a way to access conversion methods directly by name.

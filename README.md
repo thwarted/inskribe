@@ -1,6 +1,6 @@
 # Inskribe
 
-Simple python templating library based on string.Formatter.
+A python templating library based on string.Formatter.
 
 Inskribe's goals:
 
